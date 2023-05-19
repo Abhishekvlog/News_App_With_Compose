@@ -15,11 +15,13 @@ class NewsViewModel : ViewModel() {
 
     init {
         viewModelScope.launch{
-            getNews()
+            getNews("tesla")
         }
     }
 
-    suspend fun getNews(){
-        newsArticalsLiveData.value = repo.getNews().articles
+     fun getNews(search : String){
+         viewModelScope.launch {
+             newsArticalsLiveData.value = repo.getNews(search = search).articles
+         }
     }
 }
