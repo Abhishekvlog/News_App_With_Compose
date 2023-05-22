@@ -35,7 +35,9 @@ import androidx.compose.ui.unit.sp
 import com.example.newsappwithcompose.model.Article
 import com.example.newsappwithcompose.ui.theme.NewsAppWithComposeTheme
 import com.example.newsappwithcompose.viewModel.NewsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     val newsViewModel: NewsViewModel by viewModels<NewsViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
