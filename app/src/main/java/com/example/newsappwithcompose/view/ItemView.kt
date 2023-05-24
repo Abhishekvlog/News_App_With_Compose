@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,8 +35,8 @@ fun ItemView(list : Article) {
         ) {
             Text(text = list.title, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black)
             Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Text(text = list.description, fontWeight = FontWeight.Medium, fontSize = 18.sp)
-//            RowViewWithImage(str1 = list.description, width1 = 0.6f, str2 = list.urlToImage)
             Spacer(modifier = Modifier.height(8.dp))
             RowView(str1 = list.source.name, str2 = list.publishedAt)
         }
@@ -47,13 +48,5 @@ fun RowView(str1: String, str2 : String){
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(text = str1,  color = Color.Black, fontSize = 14.sp)
         Text(text = str2,  color = Color.Black, fontSize = 14.sp)
-    }
-}
-@Composable
-fun RowViewWithImage(str1: String,width1: Float, str2 : String){
-    Row(horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = str1, modifier = Modifier.fillMaxWidth(width1),fontSize = 18.sp)
-        Image(painter = rememberAsyncImagePainter(model = str2), contentDescription = null, modifier = Modifier.size(120.dp))
-
     }
 }

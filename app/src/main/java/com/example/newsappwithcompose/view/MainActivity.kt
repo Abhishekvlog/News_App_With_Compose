@@ -1,12 +1,12 @@
 package com.example.newsappwithcompose.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +19,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -32,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.example.newsappwithcompose.model.Article
 import com.example.newsappwithcompose.ui.theme.NewsAppWithComposeTheme
 import com.example.newsappwithcompose.viewModel.NewsViewModel
@@ -40,13 +41,13 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     val newsViewModel: NewsViewModel by viewModels<NewsViewModel>()
+
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             NewsAppWithComposeTheme {
-                var list = remember {
-                    mutableStateListOf<Article>()
-                }
+
                 var searchText = remember {
                     mutableStateOf("")
                 }
@@ -54,19 +55,23 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    newsViewModel.newsLiveData.observe(this) { articleList ->
-                        list.clear()
-                        list.addAll(articleList)
-                    }
+//                    newsViewModel.newsLiveData.observe(this) { articleList ->
+//                        list.clear()
+//                        list.addAll(articleList)
+//                    }
+                    val list = newsViewModel.response.collectAsLazyPagingItems()
+
                     Column {
                         SearchField(name = searchText.value) {
                             searchText.value = it
-                            if (it.isNotEmpty()) newsViewModel.getNews(it)
+                            if (it.isNotEmpty()) newsViewModel.updateQuery(it)
                         }
-                        counterView(size = list.size.toString())
+                        counterView(size = list.itemSnapshotList.size.toString())
                         LazyColumn(Modifier.clickable { false }) {
-                            items(list) { item ->
-                                ItemView(list = item)
+                            if (list.itemSnapshotList.isNotEmpty()){
+                                items(list) { article ->
+                                    ItemView(list = article!!)
+                                }
                             }
                         }
 
@@ -106,8 +111,10 @@ fun counterView(size: String) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Total Result : $size", modifier = Modifier
-                , color = Color.Black, fontSize = 12.sp
+                text = "Total Result : $size",
+                modifier = Modifier,
+                color = Color.Black,
+                fontSize = 12.sp
             )
         }
     }
